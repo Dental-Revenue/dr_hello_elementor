@@ -1,4 +1,10 @@
+
 <?php
+
+$main_title = get_post_meta(get_the_ID(), 'main_title', true);
+$sub_title = get_post_meta(get_the_ID(), 'sub_title', true);
+
+
 /**
  * The template for displaying singular post-types: posts, pages and user-defined custom post types.
  *
@@ -20,7 +26,12 @@ while ( have_posts() ) :
 			<?php if ( function_exists('yoast_breadcrumb') && !is_front_page() ) : ?>
 				<?= yoast_breadcrumb( '<p id="breadcrumbs">','</p>' ); ?>
   			<?php endif; ?>
-			<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+
+			<?php if(!is_front_page()) : ?>
+				<?= '<h1 class="entry-title">' . esc_html($main_title) . ' <span class="entry-title-subtitle">' . esc_html($sub_title) . '</span></h1>'; ?>
+			
+			<?php endif; ?>
+
 		</div>
 	<?php endif; ?>
 
