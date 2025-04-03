@@ -113,10 +113,10 @@
 
     function get_client_info_shortcode($atts) {
         $atts = shortcode_atts(['field' => ''], $atts);
-        $field = $atts['field']; // Assign the field variable
+        $field = $atts['field'];
         $value = get_option($field, 'Not Available'); // Get the field value from WP settings
     
-        // Check if the field is 'new_lead_number' and wrap it in a span with class
+        // Check if the field is 'new_lead_number' and wrap it in a span with class tracknum for PPC campaigns
         if ($field === 'new_lead_number') {
             return '<span class="tracknum">' . esc_html($value) . '</span>';
         }
@@ -146,7 +146,7 @@
         }
         add_action('wp_body_open', 'add_accountID_after_body_open');
         
-    // =============== Form ===================
+    // =============== Dental Revenue Default Form ===================
 
     function request_appointment_form_shortcode() {
         ob_start();
@@ -256,7 +256,7 @@
     }
     add_shortcode('dr_form', 'request_appointment_form_shortcode');
     
-//   Inner Page form
+//   =========== Dental Revenue Inner Page form ==============
 
     function inner_page_form_shortcode() {
         ob_start();
