@@ -43,6 +43,12 @@
     add_action('wp_body_open', 'add_script_after_body_open');
 
 
+    // Add custom fields to each page
+    function enable_custom_fields_support() {
+        add_post_type_support('page', 'custom-fields');
+    }
+    add_action('init', 'enable_custom_fields_support');
+    
 
     // ================ Modify Elementor site-logo widget for SEO ======================
 
