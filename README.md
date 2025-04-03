@@ -1,1 +1,1 @@
-DR Elementor Pro Child Theme
+DR Elementor Pro Child-Theme
