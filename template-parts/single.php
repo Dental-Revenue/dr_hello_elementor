@@ -1,8 +1,8 @@
 
 <?php
 
-$main_title = get_post_meta(get_the_ID(), 'main_title', true);
-$sub_title = get_post_meta(get_the_ID(), 'sub_title', true);
+$h1_main_title = get_post_meta(get_the_ID(), 'h1_main_title', true);
+$h1_sub_title = get_post_meta(get_the_ID(), 'h1_sub_title', true);
 
 
 /**
@@ -28,7 +28,7 @@ while ( have_posts() ) :
   			<?php endif; ?>
 
 			<?php if(!is_front_page()) : ?>
-				<?= '<h1 class="entry-title">' . esc_html($main_title) . ' <span class="entry-title-subtitle">' . esc_html($sub_title) . '</span></h1>'; ?>
+				<?= '<h1 class="entry-title">' . esc_html($h1_main_title) . ' <span class="entry-title-subtitle">' . esc_html($h1_sub_title) . '</span></h1>'; ?>
 			
 			<?php endif; ?>
 

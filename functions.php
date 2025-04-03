@@ -88,7 +88,9 @@
             'new_lead_number' => 'Lead Number',
             'current_customer_number' => 'Customer Number',
             'email' => 'Email',
-            'cc_email' => 'CC Email'
+            'cc_email' => 'CC Email',
+            'google_review_url' => 'Google Review URL',
+            'google_place_id' => 'Google Place ID'
         ];
     
         foreach ($fields as $field => $label) {
