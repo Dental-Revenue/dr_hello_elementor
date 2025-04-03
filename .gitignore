@@ -1,0 +1,18 @@
+# Ignore OS and IDE files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# Ignore WordPress core if somehow present
+/wp-admin/
+/wp-includes/
+/wp-content/plugins/
+/wp-content/uploads/
+/wp-content/themes/twenty*/
+
+# Optional: ignore node or build stuff
+node_modules/
+dist/
+build/
+.env
