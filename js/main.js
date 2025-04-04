@@ -19,11 +19,8 @@ function readCampaign(){var Campaign=getParameterByName('DRcampaign');if(Campaig
 function getParameterByName(name,url){if(!url){url=window.location.href;}
 name=name.replace(/[\[\]]/g,"\\$&");var regex=new RegExp("[?&]"+name+"(=([^&#]*)|&|#|$)"),results=regex.exec(url);if(!results)return null;if(!results[2])return'';return decodeURIComponent(results[2].replace(/\+/g," "));}
 
-// DR Form Processor 2.0
+// DR Form Processor
+//v2.0
 $(function(){$('form[action^="https://ws.dentalrevenue.com"]').on("submit",function(a){a.preventDefault();var e=$(this),n=0;if(!e.find("button").hasClass("disabled")){if(e.find(".invalid").removeClass("invalid"),e.find(".err").remove(),e.find("button").addClass("disabled"),e.find('[data-req="true"]').each(function(){var a=$(this);""==a.val()&&(a.addClass("invalid"),n++)}),$(".captcha-container").length){var s=$("#g-recaptcha-response").val();(!s||""==s)&&n++}var i=e.find('input[name="Name"]');i.length&&""==i.val()&&(i.addClass("invalid"),n++);var l=e.find('input[name="FirstName"]'),t=e.find('input[name="LastName"]');l.length&&(""==l.val()||""==t.val())&&(l.addClass("invalid"),t.addClass("invalid"),n++);var d=e.find('input[name="Phone"]'),r=e.find('input[name="EmailName"]');(d.length||r.length)&&""==d.val()&&""==r.val()&&(d.addClass("invalid"),r.addClass("invalid"),n++);var o=e.find('select[name="AdsNext-AreYouNewPatient"]');if(o.length&&"Select One"==o.val()&&(o.addClass("invalid"),o.prev().addClass("invalid"),n++),n>0){e.prepend('<p class="err">Please fill out all required form fields.</p>'),e.find("button").removeClass("disabled");return}var p=new FormData(this);p.append("api_key","6LcBtZUUAAAAALV5OTtYds1aaMjw-M_lAETu3mfc"),$(".captcha-container").length&&p.append("captchamode","simple"),$.ajax({type:"POST",url:"https://ws.dentalrevenue.com/ws/forms/postLead.aspx",cache:!1,data:p,crossDomain:!0,processData:!1,contentType:!1,success:function(a){if("error"===a.result)e.prepend('<p class="err">'+a.message+"</p>"),e.find("button").removeClass("disabled");else{var n=e.find('input[name="RedirectPageFullURL"]').val();window.location=n&&""!==n?n:"/"}},error:function(){e.prepend('<p class="err">Sorry, we had trouble processing the form. Please call our telephone number for assistance.</p>'),e.find("button").removeClass("disabled")}})}})});
 
-console.log('main.js is connected.');
-
 });
-
-
