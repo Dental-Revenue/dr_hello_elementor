@@ -34,3 +34,9 @@ form > button {
   margin: 0 auto;
   max-width: 1140px;
 }
+.entry-title-subtitle {
+  font-size: 60%;
+  display: block;
+  font-weight: 100;
+}
+
