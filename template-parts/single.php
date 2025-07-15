@@ -27,9 +27,13 @@ while ( have_posts() ) :
 				<?= yoast_breadcrumb( '<p id="breadcrumbs">','</p>' ); ?>
   			<?php endif; ?>
 
-			<?php if(!is_front_page()) : ?>
+			<?php if(!is_front_page() && !is_single()) : ?>
 				<?= '<h1 class="entry-title">' . esc_html($h1_main_title) . ' <span class="entry-title-subtitle">' . esc_html($h1_sub_title) . '</span></h1>'; ?>
-			
+	
+			<?php endif; ?>
+
+			<?php if ( is_single() && get_post_type() === 'post' ) : ?>
+    			<h1 class="entry-title"><?php the_title(); ?></h1>
 			<?php endif; ?>
 
 		</div>

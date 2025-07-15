@@ -1,10 +1,8 @@
 /*
 Theme Name: DR Hello Elementor
 Template: hello-elementor
-Version: 1.0.1-beta
-Author: Dental Revenue/AdsNext
+Version: 2.0-beta
 GitHub Theme URI: https://github.com/Dental-Revenue/dr_hello_elementor.git
-Description: A child theme for Hello Elementor.
 */
 
 .custom-logo-header {
@@ -34,9 +32,50 @@ form > button {
   margin: 0 auto;
   max-width: 1140px;
 }
-.entry-title-subtitle {
-  font-size: 60%;
+.entry-title span {
   display: block;
-  font-weight: 100;
+  font-size: 60%;
+  line-height: normal;
+  letter-spacing: normal;
 }
-
+h1.entry-title {
+  line-height: normal !important;
+}
+textarea#comments {
+  margin-top: 1rem;
+}
+input[type="text"] {
+  margin-bottom: 1rem;
+}
+select {
+  width: 200px !important;
+  padding: 8px 12px !important;
+  font-size: 16px !important ;
+  border: 1px solid #ccc !important;
+  border-radius: 6px !important;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  margin-bottom: 1rem !important;
+}
+select:focus {
+  border-color: #5a9eea !important;
+  box-shadow: 0 0 0 2px rgba(90, 158, 234, 0.2);
+}
+.grecaptcha-badge {
+  display: none !important;
+}
+a:hover {
+  text-decoration: underline;
+}
+@media (max-width: 767px) {
+  #breadcrumbs {
+    padding-left: 10px;
+  }
+  .page-content {
+    max-width: 90%;
+    margin: 0 AUTO;
+  }
+}

@@ -16,39 +16,7 @@
     add_action('wp_enqueue_scripts', 'dr_enqueue_styles');
 
     
-    // ============= Google Tag Manager =================
-    
-    function hook_javascript() {
-        ?>
-           <!-- Google Tag Manager --> 
-           <script>
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TDC7JRW9');
-            </script>   
-
-            <!-- End Google Tag Manager -->
-        <?php
-    }
-    add_action('wp_head', 'hook_javascript');
-
-
-    function add_script_after_body_open() {
-        ?>
-       <!-- Google Tag Manager (noscript) -->
-        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TDC7JRW9" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-        <!-- End Google Tag Manager (noscript) -->
-
-        <?php
-    }
-    add_action('wp_body_open', 'add_script_after_body_open');
-
-
-    // Add custom fields to each page
-    function enable_custom_fields_support() {
-        add_post_type_support('page', 'custom-fields');
-    }
-    add_action('init', 'enable_custom_fields_support');
-    
+   
 
     // ================ Modify Elementor site-logo widget for SEO ======================
 
@@ -60,13 +28,20 @@
             // Extract the <img> tag from the existing content
             preg_match('/<img[^>]+>/i', $content, $img_tag);
     
-            if (!empty($img_tag[0])) {
+            if (!empty($img_tag[0]) && is_front_page()) {
                 // Replace the default Site Logo widget output our custom markup
                 return '<h1 class="custom-logo-header">
                             <a href="' . esc_url($home_url) . '" title="' . esc_attr($site_name) . '">
                                 ' . $img_tag[0] . '
                             </a>
                         </h1>';
+            }
+            elseif(!empty($img_tag[0]) && !is_front_page()) {
+                return '<div class="custom-logo-header">
+                            <a href="' . esc_url($home_url) . '" title="' . esc_attr($site_name) . '">
+                                ' . $img_tag[0] . '
+                            </a>
+                        </div>';
             }
     
             // If no logo is set, return the site name as a link
@@ -90,6 +65,7 @@
             'state' => 'State',
             'zip' => 'Zip Code',
             'account_id' => 'Account ID',
+            'gtm_id' => 'GTM ID',
             'recaptcha_key' => 'Recaptcha Key',
             'new_lead_number' => 'Lead Number',
             'current_customer_number' => 'Customer Number',
@@ -119,10 +95,10 @@
 
     function get_client_info_shortcode($atts) {
         $atts = shortcode_atts(['field' => ''], $atts);
-        $field = $atts['field'];
+        $field = $atts['field']; // Assign the field variable
         $value = get_option($field, 'Not Available'); // Get the field value from WP settings
     
-        // Check if the field is 'new_lead_number' and wrap it in a span with class tracknum for PPC campaigns
+        // Check if the field is 'new_lead_number' and wrap it in a span with class
         if ($field === 'new_lead_number') {
             return '<span class="tracknum">' . esc_html($value) . '</span>';
         }
@@ -132,14 +108,48 @@
     }
     add_shortcode('client_info', 'get_client_info_shortcode');
 
-    //  ============== Hook test - This tests to see if the Elementor Hooks are working ====================
 
-    // function test_elementor_hook($content, $widget) {
-    //     error_log('Elementor Widget Hook Triggered: ' . $widget->get_name()); 
-    //     return '<p>Elementor Hook Test: ' . esc_html($widget->get_name()) . '</p>' . $content;
-    // }
-    // add_filter('elementor/widget/render_content', 'test_elementor_hook', 10, 2);
+     // ============= Google Tag Manager =================
+    
+     function hook_javascript() {
+        ?>
+           <!-- Google Tag Manager --> 
+           <script>
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','<?= get_option('gtm_id', 'N/A') ?>');
+            </script>   
 
+            <!-- End Google Tag Manager -->
+        <?php
+    }
+    add_action('wp_head', 'hook_javascript');
+
+
+    function add_script_after_body_open() {
+        ?>
+       <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?= get_option('gtm_id', 'N/A') ?>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+
+        <?php
+    }
+    add_action('wp_body_open', 'add_script_after_body_open');
+
+
+// Add custom fields on every page and post by default
+
+    add_action('admin_head', function() {
+        $screen = get_current_screen();
+        if ($screen->post_type === 'page') {
+            add_filter('default_hidden_meta_boxes', function($hidden, $screen) {
+                if ($screen->id === 'page') {
+                    return array_diff($hidden, ['postcustom']);
+                }
+                return $hidden;
+            }, 10, 2);
+        }
+    });
+    
 
         // ============= Dash AccountID ===============
 
@@ -152,7 +162,7 @@
         }
         add_action('wp_body_open', 'add_accountID_after_body_open');
         
-    // =============== Dental Revenue Default Form ===================
+    // =============== Form ===================
 
     function request_appointment_form_shortcode() {
         ob_start();
@@ -230,11 +240,8 @@
     
             <br>
     
-            <div class="captcha-container">
-                <div class="g-recaptcha" data-sitekey="<?= get_option('recaptcha_key', 'N/A') ?>"></div>
-            </div>
-    
-            <button type="submit" class="btn solid">Submit</button>
+            <button class="g-recaptcha btn solid" data-sitekey="<?= get_option('recaptcha_key', 'N/A') ?>" data-callback="onSubmit" data-action="submit" type="submit">Submit</button>
+
     
             <!-- Dashboard Account Info -->
             <input name="Subject" type="hidden" value="<?= get_option('office_name', 'N/A') ?> Schedule Appointment Form">
@@ -246,23 +253,22 @@
             <?php if ($cc_email = get_option('cc_email')): ?>
                 <input name="EmailCC" type="hidden" value="<?= esc_attr($cc_email) ?>">
             <?php endif; ?>
-      
-
-            <input type="hidden" name="gaSource">
-            <input type="hidden" name="gaMedium">
-            <input type="hidden" name="gaCampaign">
-            <input type="hidden" name="gaKeyword">
-            <input type="hidden" name="pagename">       
-            <!-- END Dashboard Account Info -->
+            
         </form>
     
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <!-- <script>
+        function onSubmit(token) {
+            document.forms['form-schedule'].submit();
+            }
+        </script> -->
+
         <?php
         return ob_get_clean();
     }
     add_shortcode('dr_form', 'request_appointment_form_shortcode');
     
-//   =========== Dental Revenue Inner Page form ==============
+//   Inner Page form
 
     function inner_page_form_shortcode() {
         ob_start();
@@ -287,37 +293,138 @@
     
     
             <br>
-    
-            <div class="captcha-container">
-                <div class="g-recaptcha" data-sitekey="<?= get_option('recaptcha_key', 'N/A') ?>"></div>
-            </div>
-    
-            <button type="submit" class="btn solid">Submit</button>
-    
+            <button class="g-recaptcha btn solid" data-sitekey="<?= get_option('recaptcha_key', 'N/A') ?>" data-callback="onSubmit" data-action="submit" type="submit">Submit</button>
+
             <!-- Dashboard Account Info -->
             <input name="Subject" type="hidden" value="<?= get_option('office_name', 'N/A') ?> Schedule Appointment Form">
             <input name="Campaign" type="hidden" value="Schedule Appointment Form">
             <input name="AccountID" type="hidden" value="<?= get_option('account_id', 'N/A') ?>">
             <input name="RedirectPageFullURL" type="hidden" value="/thank-you">
             <input name="EmailRecipient" type="hidden" value="<?= get_option('email', 'N/A') ?>">
+            
 
             <?php if ($cc_email = get_option('cc_email')): ?>
                 <input name="EmailCC" type="hidden" value="<?= esc_attr($cc_email) ?>">
             <?php endif; ?>
-      
 
-            <input type="hidden" name="gaSource">
-            <input type="hidden" name="gaMedium">
-            <input type="hidden" name="gaCampaign">
-            <input type="hidden" name="gaKeyword">
-            <input type="hidden" name="pagename">       
-            <!-- END Dashboard Account Info -->
         </form>
     
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    
         <?php
         return ob_get_clean();
     }
     add_shortcode('dr_form-innerpage', 'inner_page_form_shortcode');
+
+
+
+
+
+
+//   Inner Page form
+
+    function minimal_form_shortcode() {
+        ob_start();
+        ?>
+        <form action="https://ws.dentalrevenue.com/ws/forms/ProcessLeadCertV5.aspx" method="post" name="form-schedule" autocomplete="nope" id="mini-form">
+
+        
+                
+           
+                <div class="contact-info mini-contact-info">
+                        <label class="elementor-screen-only" for="firstname">Name:</label>
+                    <input type="text" name="Name" id="firstname" class="s-input" placeholder="Name">
+                    <label class="elementor-screen-only" for="phone">Phone:</label> 
+                    <input type="text" name="Phone" id="phone" class="s-input" placeholder="Phone">
+                    <label class="elementor-screen-only" for="email">Email:</label> 
+                    <input type="text" name="EmailName" id="email" class="s-input" placeholder="Email">
+                    <input type="text" name="RepeatEmailName" placeholder="Retype Email" autocomplete="nope">
+                                <button class="g-recaptcha btn solid" data-sitekey="<?= get_option('recaptcha_key', 'N/A') ?>" data-callback="onSubmit" data-action="submit" type="submit">Submit</button>
+
+               
+                
+                </div>
     
-  
+    
+            <br>
+
+            <!-- Dashboard Account Info -->
+            <input name="Subject" type="hidden" value="<?= get_option('office_name', 'N/A') ?> Schedule Appointment Form">
+            <input name="Campaign" type="hidden" value="Schedule Appointment Form">
+            <input name="AccountID" type="hidden" value="<?= get_option('account_id', 'N/A') ?>">
+            <input name="RedirectPageFullURL" type="hidden" value="/thank-you">
+            <input name="EmailRecipient" type="hidden" value="<?= get_option('email', 'N/A') ?>">
+            
+
+            <?php if ($cc_email = get_option('cc_email')): ?>
+                <input name="EmailCC" type="hidden" value="<?= esc_attr($cc_email) ?>">
+            <?php endif; ?>
+
+        </form>
+            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <style>
+            form#mini-form {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+}
+.contact-info.mini-contact-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.contact-info.mini-contact-info > input {
+    margin-bottom: 0;
+    margin-right: 1rem;
+}
+#mini-form > div > button {
+    width: 100%;
+}
+@media(max-width: 767px) {
+    #mini-form, .contact-info.mini-contact-info  {
+        flex-direction: column;
+        align-items: baseline;
+    }
+   #mini-form > div > button {
+    margin-top: 1rem;
+}
+.contact-info.mini-contact-info > input {
+    margin-bottom: 15px;}
+
+    
+}
+        </style>
+    
+    
+    
+        <?php
+        return ob_get_clean();
+    }
+    add_shortcode('minimal_form', 'minimal_form_shortcode');
+    
+
+
+    //exclude noindex pages from sitemap
+function exclude_no_indexes_from_wp_list_pages( $pages, $args ) {	
+    if( array_key_exists( 'walker', $args ) ) {
+        foreach ( $pages as $key => $item ) {
+            $_yoast_wpseo_meta_robots_noindex = get_post_meta( $item->ID, '_yoast_wpseo_meta-robots-noindex', true );
+            if( $_yoast_wpseo_meta_robots_noindex == 1 ) unset( $pages[$key] );
+        }
+    }
+    return $pages;
+}
+add_filter( 'get_pages', 'exclude_no_indexes_from_wp_list_pages', 10, 2 );
+
+
+
+add_filter('acf/settings/remove_wp_meta_box', '__return_false');
+
+
+
+
+

@@ -1,1 +1,2 @@
-DR Elementor Pro Child-Theme
+DR Elementor Pro Child Theme
+Version 1.1(beta)
