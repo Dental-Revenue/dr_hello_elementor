@@ -70,6 +70,10 @@ select:focus {
 a:hover {
   text-decoration: underline;
 }
+.entry-title {
+  text-align: center;
+}
+
 @media (max-width: 767px) {
   #breadcrumbs {
     padding-left: 10px;
